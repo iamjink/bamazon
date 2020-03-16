@@ -37,141 +37,83 @@ function createProduct() {
         colWidths: [12, 25, 25, 12, 15]
       });
       for (let i = 0; i < res.length; i++) {
-       displayTable.push([res[i].item_id, res[i].product_name, res[i].department_name, res[i].price, res[i].stock_quantity]);
+        displayTable.push([res[i].item_id, res[i].product_name, res[i].department_name, res[i].price, res[i].stock_quantity]);
       }
-      
+
       console.log("product inserted!\n");
       console.log(displayTable.toString());
 
-      start();
+      promtForProduct();
     });
 
   // console.log(query.sql);
 }
 
 // function which prompts the user for what action they should take
-function start() {
-  inquirer
-    .prompt({
-      name: "postOrBid",
-      type: "list",
-      message: "Would you like to [POST] an auction or [BID] on an auction?",
-      choices: ["POST", "BID", "EXIT"]
-    })
-    .then(function (answer) {
-      // based on their answer, either call the bid or the post functions
-      if (answer.postOrBid === "POST") {
-        postAuction();
-      } else if (answer.postOrBid === "BID") {
-        bidAuction();
-      } else {
-        connection.end();
-      }
-    });
-}
+function promtForProduct() {
 
+  //conect to the databse
+  connection.query("SELECT * FROM sql3327345.products", function (err, res) {
 
-// function to handle posting new items up for auction
-function postAuction() {
-  // prompt for info about the item being put up for auction
-  inquirer
-    .prompt([{
-        name: "item",
-        type: "input",
-        message: "What is the item you would like to submit?"
-      },
-      {
-        name: "category",
-        type: "input",
-        message: "What category would you like to place your auction in?"
-      },
-      {
-        name: "startingBid",
-        type: "input",
-        message: "What would you like your starting bid to be?",
-        validate: function (value) {
-          if (isNaN(value) === false) {
-            return true;
-          }
-          return false;
-        }
-      }
-    ])
-    .then(function (answer) {
-      // when finished prompting, insert a new item into the db with that info
-      connection.query(
-        "INSERT INTO auctions SET ?", {
-          item_name: answer.item,
-          category: answer.category,
-          starting_bid: answer.startingBid || 0,
-          highest_bid: answer.startingBid || 0
-        },
-        function (err) {
-          if (err) throw err;
-          console.log("Your auction was created successfully!");
-          // re-prompt the user for if they want to bid or post
-          start();
-        }
-      );
-    });
-}
-
-function bidAuction() {
-  // query the database for all items being auctioned
-  connection.query("SELECT * FROM auctions", function (err, results) {
-    if (err) throw err;
-    // once you have the items, prompt the user for which they'd like to bid on
+    //promt user which item he/she wants to purchase
     inquirer
       .prompt([{
-          name: "choice",
-          type: "rawlist",
+          name: "id",
+          type: "list",
+          message: "What is the product you would like to purchase?",
           choices: function () {
             var choiceArray = [];
-            for (var i = 0; i < results.length; i++) {
-              choiceArray.push(results[i].item_name);
+            for (var i = 0; i < res.length; i++) {
+              choiceArray.push(res[i].item_id);
             }
             return choiceArray;
-          },
-          message: "What auction would you like to place a bid in?"
+          }
         },
         {
-          name: "bid",
+          name: "unitNum",
           type: "input",
-          message: "How much would you like to bid?"
+          message: "How many units would you like to purchase?",
+          fitler: Number
         }
       ])
       .then(function (answer) {
         // get the information of the chosen item
         var chosenItem;
-        for (var i = 0; i < results.length; i++) {
-          if (results[i].item_name === answer.choice) {
-            chosenItem = results[i];
+        for (var i = 0; i < res.length; i++) {
+          if (res[i].item_id === answer.id && answer.unitNum <= res[i].stock_quantity) {
+            chosenItem = res[i];
+
+            console.log("Your order is in stock!");
+
+            var unitQuantity = answer.unitNum;
+            var ID = answer.id;
+            update(ID, unitQuantity);
+
           }
         }
-
-        // determine if bid was high enough
-        if (chosenItem.highest_bid < parseInt(answer.bid)) {
-          // bid was high enough, so update db, let the user know, and start over
-          connection.query(
-            "UPDATE auctions SET ? WHERE ?",
-            [{
-                highest_bid: answer.bid
-              },
-              {
-                id: chosenItem.id
-              }
-            ],
-            function (error) {
-              if (error) throw err;
-              console.log("Bid placed successfully!");
-              start();
-            }
-          );
-        } else {
-          // bid wasn't high enough, so apologize and start over
-          console.log("Your bid was too low. Try again...");
-          start();
-        }
       });
-  });
+
+
+  })
+
 }
+
+function update(userItemID, quantityRequested) {
+  connection.query('Select * FROM sql3327345.products WHERE item_id =' + userItemID, function (err, res) {
+    if (err) {
+      console.log(err)
+    }
+    if (quantityRequested <= res[0].stock_quantity) {
+      var userCost = res[0].price * quantityRequested;
+      console.log("Your total cost for " + res[0].price + " is $" + userCost + " . Thank you!");
+      connection.query("UPDATE sql3327345.products SET stock_quantity = stock_quantity - " + quantityRequested + " WHERE item_id= " + userItemID);
+
+    
+
+    } else {
+      console.log("Insufficient quantity. We will notify you of next shipment.");
+    }
+
+
+  });
+};  

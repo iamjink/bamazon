@@ -26,7 +26,7 @@
 
   ## Database
   
-  * `MySQL` (https://developer.spotify.com/)
+  * `MySQL`
   * `FreeSQLdatabase` (https://www.freesqldatabase.com/)
 
  
@@ -46,19 +46,19 @@
    * However, if the store _does_ have enough of the product, it will fulfill the customer's order.
 
       * This means updating the SQL database to reflect the remaining quantity.
-      * Once the update goes through, show the customer the total cost of their purchase.
+      * Once the update goes through, it will show the customer the total cost of their purchase.
 
 2. `node bamazonManager.js`
 
    * List a set of menu options:
 
-    * View Products for Sale
+      * View Products for Sale
     
-    * View Low Inventory
+      * View Low Inventory
+     
+      * Add to Inventory
     
-    * Add to Inventory
-    
-    * Add New Product
+      * Add New Product
 
   * If a manager (user) selects `View Products for Sale`, the app should list every available item: the item IDs, names, prices, and quantities.
 
@@ -71,7 +71,7 @@
 
 3. `node bamazonSupervisor.js`
 
-  * When a supervisor selects `View Product Sales by Department`, the app should display a summarized table in their terminal/bash window. Use the table below as a guide.
+   * When a supervisor selects `View Product Sales by Department`, the app should display a summarized table in their terminal/bash window. Use the table below as a guide.
 
 
 | department_id | department_name | over_head_costs | product_sales | total_profit |
@@ -92,8 +92,3 @@
 
     ![screenshot](images/02.png)
 
-    ![screenshot](images/03.png)
-
-    ![screenshot](images/04.png)
-
-    ![screenshot](images/log.png)
