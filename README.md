@@ -2,7 +2,8 @@
 
 ### What Is *Bamazon*
 
- LIRI is a _Language_ Interpretation and Recognition Interface. LIRI will be a command line node app that takes in parameters and gives you back data.
+ Bamazon is an Amazon-like storefront with MySQL.
+ The app will take in orders from customers and deplete stock from the store's inventory. 
 
  ### NPM Packages
  
