@@ -88,7 +88,9 @@
 
   `Below are screenshots of the terminal and MySQL Workbench`
 
-    ![screenshot](images/01.png)
+   ![screenshot](images/01.png)
 
-    ![screenshot](images/02.png)
+   below shows the updated quanity for item 33 in mySQL.
+   
+   ![screenshot](images/02.png)
 
