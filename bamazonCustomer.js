@@ -46,7 +46,7 @@ function createProduct() {
       start();
     });
 
-  console.log(query.sql);
+  // console.log(query.sql);
 }
 
 // function which prompts the user for what action they should take
