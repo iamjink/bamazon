@@ -8,6 +8,7 @@
  
  * `mysql`
  * `inquirer`
+ * `cli-table`
 
 ## Node commands
 
